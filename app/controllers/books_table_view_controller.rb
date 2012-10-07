@@ -26,7 +26,7 @@ class BooksTableViewController < UITableViewController
 
   def tableView(tableView, numberOfRowsInSection:section)
     nr = @author ? @author['books'].length : 0
-    nr += 1 if tableView.isEditing
+    nr += 1 if @editInitialized
     nr
   end
 
@@ -55,16 +55,14 @@ class BooksTableViewController < UITableViewController
     @editInitialized = false
     super(isEditing, animated:animated)
 
-    top_index_path = [NSIndexPath.indexPathForRow(0, inSection:0)]
-
-    puts "self.isEditing? #{isEditing}"
+    last_index_path = [NSIndexPath.indexPathForRow(@author[:books].length, inSection:0)]
 
     if (isEditing)
         @editInitialized = true
-        tableView.insertRowsAtIndexPaths(top_index_path, withRowAnimation:UITableViewRowAnimationBottom)
+        tableView.insertRowsAtIndexPaths(last_index_path, withRowAnimation:UITableViewRowAnimationBottom)
     else
-        tableView.deleteRowsAtIndexPaths(top_index_path, withRowAnimation:UITableViewRowAnimationBottom)
-        if (@input.text != '')
+        tableView.deleteRowsAtIndexPaths(last_index_path, withRowAnimation:UITableViewRowAnimationBottom)
+        if (@input && @input.text != '')
           Dispatch::Queue.concurrent('mc-data').after(1) {
             @author[:books] << @input.text
             view.reloadData
@@ -74,9 +72,7 @@ class BooksTableViewController < UITableViewController
   end
 
   def tableView(tableView, cellForRowAtIndexPath:indexPath)
-    return add_cell if indexPath.row == 0 && isEditing
-
-    book_index = isEditing ? indexPath.row - 1 : indexPath.row
+    return add_cell if indexPath.row == @author[:books].length
 
     cellIdentifier = self.class.name
     cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier) || begin
@@ -84,14 +80,14 @@ class BooksTableViewController < UITableViewController
       cell
     end
 
-    cell.textLabel.text = @author[:books][book_index]
+    cell.textLabel.text = @author[:books][indexPath.row]
     cell
   end
 
 
 
   def tableView(tableView, editingStyleForRowAtIndexPath:indexPath)
-    if @editInitialized && indexPath.row == 0
+    if @editInitialized && indexPath.row == @author[:books].length
       return UITableViewCellEditingStyleInsert
     else
       return UITableViewCellEditingStyleDelete
