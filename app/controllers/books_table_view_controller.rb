@@ -1,6 +1,8 @@
 class BooksTableViewController < UITableViewController
   def viewDidLoad
     super
+
+    self.navigationItem.rightBarButtonItem = self.editButtonItem
   end
 
   def bind_with_books(author)
@@ -37,5 +39,16 @@ class BooksTableViewController < UITableViewController
     cell.textLabel.text = book
     cell
   end
+
+  def tableView(tableView, commitEditingStyle:editingStyle, forRowAtIndexPath:indexPath)
+    if editingStyle == UITableViewCellEditingStyleDelete
+      book = @author[:books][indexPath.row]
+      @author[:books].delete(book)
+      view.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimationFade)
+    end
+  end
+
+
+
 
 end

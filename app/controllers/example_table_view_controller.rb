@@ -12,7 +12,12 @@ class ExampleTableViewController < UITableViewController
 
     Dispatch::Queue.concurrent('mc-data').async {
       authors_string = File.read("#{App.resources_path}/authors.json")
-      @authors = BW::JSON.parse authors_string
+      @authors = BW::JSON.parse(authors_string).map do |author|
+        a = author.dup
+        a[:books] = a[:books].dup
+        a
+      end
+
       view.reloadData
     }
 
