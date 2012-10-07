@@ -31,6 +31,9 @@ class BooksTableViewController < UITableViewController
   end
 
   def tableView(tableView, cellForRowAtIndexPath:indexPath)
+    return add_cell if indexPath.row == @author[:books].length
+
+
     cellIdentifier = self.class.name
     cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier) || begin
       cell = UITableViewCell.alloc.initWithStyle(UITableViewCellStyleDefault, reuseIdentifier:cellIdentifier)
@@ -66,6 +69,26 @@ class BooksTableViewController < UITableViewController
     else
       return UITableViewCellEditingStyleDelete
     end
+  end
+
+  def add_cell
+    cellIdentifier = "new_book"
+    cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier) || begin
+      cell = UITableViewCell.alloc.initWithStyle(UITableViewCellStyleDefault, reuseIdentifier:cellIdentifier)
+      left_padding = 40
+      padding = 10
+
+      @input = UITextField.alloc.initWithFrame([[left_padding, padding],[cell.size.width - left_padding - padding, cell.size.height - (padding * 2)]])
+      @input.borderStyle = UITextBorderStyleRoundedRect
+      cell.addSubview(@input)
+
+      cell
+    end
+
+    @input.text = ''
+    @input.placeholder = "new book"
+
+    cell
   end
 
 end
