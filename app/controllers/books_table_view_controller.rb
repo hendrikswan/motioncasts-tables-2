@@ -59,7 +59,13 @@ class BooksTableViewController < UITableViewController
     last_index_path = [NSIndexPath.indexPathForRow(@author[:books].length, inSection:0)]
 
     if (isEditing)
-        tableView.insertRowsAtIndexPaths(last_index_path, withRowAnimation:UITableViewRowAnimationBottom)
+      tableView.insertRowsAtIndexPaths(last_index_path, withRowAnimation:UITableViewRowAnimationBottom)
+    else
+      tableView.deleteRowsAtIndexPaths(last_index_path, withRowAnimation:UITableViewRowAnimationBottom)
+      if (@input && @input.text != '')
+          @author[:books] << @input.text
+          view.reloadData
+      end
     end
   end
 
