@@ -48,4 +48,14 @@ class BooksTableViewController < UITableViewController
     end
   end
 
+  def setEditing(isEditing, animated:animated)
+    super(isEditing, animated:animated)
+    last_index_path = [NSIndexPath.indexPathForRow(@author[:books].length, inSection:0)]
+
+    if (isEditing)
+        @editInitialized = true
+        tableView.insertRowsAtIndexPaths(last_index_path, withRowAnimation:UITableViewRowAnimationBottom)
+    end
+  end
+
 end
