@@ -40,15 +40,5 @@ class BooksTableViewController < UITableViewController
     cell
   end
 
-  def tableView(tableView, commitEditingStyle:editingStyle, forRowAtIndexPath:indexPath)
-    if editingStyle == UITableViewCellEditingStyleDelete
-      book = @author[:books][indexPath.row]
-      @author[:books].delete(book)
-      view.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimationFade)
-    end
-  end
-
-
-
 
 end
