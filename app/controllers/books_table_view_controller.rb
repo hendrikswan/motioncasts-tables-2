@@ -25,7 +25,9 @@ class BooksTableViewController < UITableViewController
   end
 
   def tableView(tableView, numberOfRowsInSection:section)
-    @author ? @author['books'].length : 0
+    nr = @author ? @author['books'].length : 0
+    nr += 1 if @editInitialized
+    nr
   end
 
   def tableView(tableView, cellForRowAtIndexPath:indexPath)
