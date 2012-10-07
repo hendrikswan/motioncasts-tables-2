@@ -60,4 +60,12 @@ class BooksTableViewController < UITableViewController
     end
   end
 
+  def tableView(tableView, editingStyleForRowAtIndexPath:indexPath)
+    if indexPath.row == @author[:books].length
+      return UITableViewCellEditingStyleInsert
+    else
+      return UITableViewCellEditingStyleDelete
+    end
+  end
+
 end
