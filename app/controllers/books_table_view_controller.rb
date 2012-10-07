@@ -64,6 +64,12 @@ class BooksTableViewController < UITableViewController
         tableView.insertRowsAtIndexPaths(top_index_path, withRowAnimation:UITableViewRowAnimationBottom)
     else
         tableView.deleteRowsAtIndexPaths(top_index_path, withRowAnimation:UITableViewRowAnimationBottom)
+        if (@input.text != '')
+          Dispatch::Queue.concurrent('mc-data').after(1) {
+            @author[:books] << @input.text
+            view.reloadData
+          }
+        end
     end
   end
 
