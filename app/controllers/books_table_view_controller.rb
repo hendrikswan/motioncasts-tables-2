@@ -25,20 +25,73 @@ class BooksTableViewController < UITableViewController
   end
 
   def tableView(tableView, numberOfRowsInSection:section)
-    @author ? @author['books'].length : 0
+    nr = @author ? @author['books'].length : 0
+    nr += 1 if tableView.isEditing
+    nr
+  end
+
+
+  def add_cell
+    cellIdentifier = "new_book"
+    cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier) || begin
+      cell = UITableViewCell.alloc.initWithStyle(UITableViewCellStyleDefault, reuseIdentifier:cellIdentifier)
+      left_padding = 40
+      padding = 10
+
+      @input = UITextField.alloc.initWithFrame([[left_padding, padding],[cell.size.width - left_padding - padding, cell.size.height - (padding * 2)]])
+      @input.borderStyle = UITextBorderStyleRoundedRect
+      cell.addSubview(@input)
+
+      cell
+    end
+
+    @input.text = ''
+    @input.placeholder = "new book"
+
+    cell
+  end
+
+  def setEditing(isEditing, animated:animated)
+    @editInitialized = false
+    super(isEditing, animated:animated)
+
+    top_index_path = [NSIndexPath.indexPathForRow(0, inSection:0)]
+
+    puts "self.isEditing? #{isEditing}"
+
+    if (isEditing)
+        @editInitialized = true
+        tableView.insertRowsAtIndexPaths(top_index_path, withRowAnimation:UITableViewRowAnimationBottom)
+    else
+        tableView.deleteRowsAtIndexPaths(top_index_path, withRowAnimation:UITableViewRowAnimationBottom)
+    end
   end
 
   def tableView(tableView, cellForRowAtIndexPath:indexPath)
+    return add_cell if indexPath.row == 0 && isEditing
+
+    book_index = isEditing ? indexPath.row - 1 : indexPath.row
+
     cellIdentifier = self.class.name
     cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier) || begin
       cell = UITableViewCell.alloc.initWithStyle(UITableViewCellStyleDefault, reuseIdentifier:cellIdentifier)
       cell
     end
 
-    book = @author['books'][indexPath.row]
-    cell.textLabel.text = book
+    cell.textLabel.text = @author[:books][book_index]
     cell
   end
+
+
+
+  def tableView(tableView, editingStyleForRowAtIndexPath:indexPath)
+    if @editInitialized && indexPath.row == 0
+      return UITableViewCellEditingStyleInsert
+    else
+      return UITableViewCellEditingStyleDelete
+    end
+  end
+
 
   def tableView(tableView, commitEditingStyle:editingStyle, forRowAtIndexPath:indexPath)
     if editingStyle == UITableViewCellEditingStyleDelete
