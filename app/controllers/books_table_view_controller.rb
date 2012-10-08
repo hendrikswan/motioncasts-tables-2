@@ -102,7 +102,12 @@ class BooksTableViewController < UITableViewController
   end
 
   def tableView(tableView, moveRowAtIndexPath:fromIndexPath, toIndexPath:toIndexPath)
-
+    book = @author[:books].delete_at(fromIndexPath.row)
+    if(toIndexPath.row < fromIndexPath.row)
+      @author[:books].insert(toIndexPath.row, book.dup)
+    else
+      @author[:books].insert(toIndexPath.row -1, book.dup)
+    end
   end
 
 end
