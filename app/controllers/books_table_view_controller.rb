@@ -97,4 +97,12 @@ class BooksTableViewController < UITableViewController
     cell
   end
 
+  def tableView(tableView, canMoveRowAtIndexPath:indexPath)
+    indexPath.row < @author[:books].length
+  end
+
+  def tableView(tableView, moveRowAtIndexPath:fromIndexPath, toIndexPath:toIndexPath)
+
+  end
+
 end
